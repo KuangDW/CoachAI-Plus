@@ -19,7 +19,6 @@ async def VisualizeAPI(opponent_type: Annotated[bool, Form()] , player_location_
       players = match["player"].unique().tolist()
       if(len(players) != 2):
         raise KeyError("There are not 2 players")
-      match = match[:10]
       match = match.filter(items=['rally', 'ball_round', 'player', 'player_score', 'opponent_score', 'landing_x', 'landing_y', 'hit_x', 'hit_y', 'player_location_x', 'player_location_y', 'opponent_location_x', 'opponent_location_y', 'lose_reason'])
       player = players[0]
       opponent = players[1]
