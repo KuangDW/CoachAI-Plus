@@ -16,7 +16,8 @@ def ReadFile(file):
     df['type'] = df['type'].map(type)
     df['lose_reason'] = df['lose_reason'].map(lose_reason)
     df['win_reason'] = df['win_reason'].map(win_reason)
-    df = df[df['type'] != 11].reset_index(drop=True)
+    # df = df[df['type'] != 11].reset_index(drop=True)
+    df = df[df['score_status'].notnull()].reset_index(drop=True)
 
     return df, player_list
 

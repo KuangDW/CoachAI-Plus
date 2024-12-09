@@ -1,1 +1,2 @@
-statics/
+statics/*
+!statics/all_dataset.csv

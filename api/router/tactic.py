@@ -1,7 +1,8 @@
 from fastapi import APIRouter, File, UploadFile
 import pandas as pd
 from typing import List
-from Tactic_Evaluation.main import Tactic
+from Tactic_Evaluation import Tactic
+from utils.basicInfo import basicInfo
 
 TacticRouter = APIRouter()
 
@@ -10,7 +11,8 @@ async def TacticAPI(files: List[UploadFile]):
   result = []
   for file in files:
       match = pd.read_csv(file.file)
+      info = basicInfo(match, file)
       file_dict = Tactic(match, "./api/statics")
-      result.append(file_dict)
+      result.append({**file_dict, **info})
 
   return result

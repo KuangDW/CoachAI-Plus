@@ -1,12 +1,12 @@
-import { useState } from "react";
 import { fetchApi } from "../utils/api";
 import TacticDisplay from "../components/TacticDisplay";
+import useTacticStore from "../store/useTacticStore";
 
 const Tactic = () => {
-  const [files, setFiles] = useState<FileList | null>(null);
-  const [loading, setLoading] = useState(false);
-  const [data, setData] = useState<TacticResponse[]>([]);
-  const [index, setIndex] = useState(0);
+  const {files, setFiles} = useTacticStore();
+  const {loading, setLoading} = useTacticStore();
+  const {data, setData} = useTacticStore();
+  const {index, setIndex} = useTacticStore();
 
   const handleReset = () => {
     setIndex(0);
@@ -65,15 +65,20 @@ const Tactic = () => {
                   <button
                     className="btn btn-primary"
                     disabled={index < 1}
-                    onClick={() => setIndex((i) => i - 1)}
+                    onClick={() => setIndex(index - 1)}
                   >
                     Prev
                   </button>
-                  <h1 className="text-2xl font-bold">Set {index + 1}</h1>
+                  <div
+                    className="tooltip tooltip-primary"
+                    data-tip={`${data[index].filename}/${data[index].rally}`}
+                  >
+                    <h1 className="text-2xl font-bold">Set {index + 1}</h1>
+                  </div>
                   <button
                     className="btn btn-primary"
                     disabled={index > data.length - 2}
-                    onClick={() => setIndex((i) => i + 1)}
+                    onClick={() => setIndex(index + 1)}
                   >
                     Next
                   </button>

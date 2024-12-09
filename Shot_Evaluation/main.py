@@ -2,17 +2,19 @@ import os
 
 import numpy as np
 import pandas as pd
-from Utils.coord2area import coord2area
-from Utils.Dataprocess import *
-from Utils.PlotLastBallRound import plot_last_ball_round
-from Utils.PlotShotTypeEvaluation import plot_shot_type_evaluation
-from Utils.PlotTopReasons import plot_top_reasons
+from .Utils.coord2area import coord2area
+from .Utils.Dataprocess import *
+from .Utils.PlotLastBallRound import plot_last_ball_round
+from .Utils.PlotShotTypeEvaluation import plot_shot_type_evaluation
+from .Utils.PlotTopReasons import plot_top_reasons
+from .Utils.PlotDensityDifferenceBetweenMatches import plot_density_difference_between_matches
+from .Utils.CalculateLastBallRoundJSD import calculate_last_ball_round_jsd
 
-from shot_influence import plot_shot_influence
-from exertion import plot_energetic_cost
+from .shot_influence import plot_shot_influence
+from .exertion import plot_energetic_cost
 
 
-def Evaluation(match, last_ball_round = 3, dest_folder = './Shot_Evaluation/Result'):
+def Evaluation(match, last_ball_round = 3, dest_folder = './Shot_Evaluation/Result',matchId1 = 23, matchId2 = 28):
     """所對應分別是：
     df: dataframe
     df_dict: df長度統計dict
@@ -67,39 +69,28 @@ def Evaluation(match, last_ball_round = 3, dest_folder = './Shot_Evaluation/Resu
     for i in rallies:
         fn8.append(plot_shot_influence.main(player_list[1], match_id, set_num, i, df, df_model2, dest_folder))
 
+
     #5. 體力消耗
     fn9 = plot_energetic_cost(df, match_id, set_num, player_list[0], dest_folder)
 
-    return {player_list[0]: {'shot_type': fn1, 'last_ball': fn3, 'top_reasons': fn5, 'shot_influence': fn7},
-            player_list[1]: {'shot_type': fn2, 'last_ball': fn4, 'top_reasons': fn6, 'shot_influence': fn8},
-            "energetic_cost": fn9}
+
+    #6. 最後n球 分布比較
+    if matchId1 in df['match_id'].values and matchId2 in df['match_id'].values:
+        fn10 = None#plot_density_difference_between_matches(df, player_list[0], matchId1, matchId2, last_ball_round, dest_folder)
+    else:
+        fn10 = None
 
 
-def main(File_list):
-    """
-    格式:File = [file 1, file 2,...file n]
-    file n = {player 1: {plot1_1: path1_1, plot1_2: path1_2, ...}, 
-              player 2: {plot2_1: path2_1, plot2_2: path2_2, ...}}
-    """
-    File = []
-    for file in File_list:
-        match = pd.read_csv(file)
-
-        match['match_id'] = match['match_id'].astype(int).astype(str)
-        match_id_mapping = {'1':'23', '3': '28', '5': '30', '6': '31', '7': '32', '13': '49', '2': '25', '4': '29', '8': '36', '9': '43', '10': '44',
-                    '11': '45', '19': '55', '14': '50', '15': '51', '30': '72', '36': '79', '44': '97', '17': '53', '26': '64', '12': '48',
-                    '20': '56', '23': '60', '28': '69', '41': '88', '18': '54', '16': '52', '27': '66', '33': '75', '37': '82', '24': '61',
-                    '39': '86', '21': '57', '34': '76', '29': '71', '35': '78', '38': '85', '22': '58', '32': '74', '25': '63', '31': '73',
-                    '43': '94', '42': '89', '40': '87'}
-        match_id_mapping = {k: int(v) for k, v in match_id_mapping.items()}
-        match['match_id'] = match['match_id'].map(match_id_mapping)
-        
-        file_dict = Evaluation(match)
-        File.append(file_dict)
-
-    return File
+    js = calculate_last_ball_round_jsd(df, player_list[0], player_list[1], last_ball_round, dest_folder)
 
 
-if __name__ == "__main__":
-    File_list = ["./input_data/all_dataset.csv"]
-    main(File_list)
+    result = {
+        player_list[0]: {'shot_type': fn1, 'last_ball': fn3, 'top_reasons': fn5, 'shot_influence': fn7},
+        player_list[1]: {'shot_type': fn2, 'last_ball': fn4, 'top_reasons': fn6, 'shot_influence': fn8},
+        "energetic_cost": fn9
+    }
+
+    if fn10 is not None:
+        result["density_difference"] = fn10
+
+    return result

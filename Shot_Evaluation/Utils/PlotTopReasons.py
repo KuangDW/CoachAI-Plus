@@ -60,12 +60,12 @@ def plot_top_reasons(Real_List, player_name, dest_folder = './Shot_Evaluation/Re
     lose_reason_count_statistic = {}
     
     for df in Real_List:
-        if df.iloc[-1]['getpoint_player'] != player_name:
+        if df.iloc[-1]['getpoint_player'] != player_name and df.shape[0] != 1:
             state, lose_reason = get_row_state(df, player_name, 'lose')
             if (state, lose_reason) not in lose_reason_count_statistic:
                 lose_reason_count_statistic[(state, lose_reason)] = 0
             lose_reason_count_statistic[(state, lose_reason)] += 1
-        else:
+        elif df.shape[0] != 1:
             state, lose_reason = get_row_state(df, player_name, 'win')
             if (state, lose_reason) not in win_reason_count_statistic:
                 win_reason_count_statistic[(state, lose_reason)] = 0

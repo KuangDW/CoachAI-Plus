@@ -4,7 +4,7 @@ import { RouterProvider, createBrowserRouter } from "react-router-dom";
 import "./index.css";
 
 import App from "./App";
-import Shot from "./routes/Shot";
+import Shot from "./routes/Evaluation";
 import Tactic from "./routes/Tactic";
 import Visualization from "./routes/Visualization";
 

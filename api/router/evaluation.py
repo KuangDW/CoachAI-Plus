@@ -2,15 +2,17 @@ from fastapi import APIRouter, UploadFile, Form
 import pandas as pd
 from typing import List
 from typing_extensions import Annotated
-from Shot_Evaluation.main import Evaluation
+from utils.basicInfo import basicInfo
+from Shot_Evaluation import Evaluation
 
 EvaluztionRouter = APIRouter()
 
 @EvaluztionRouter.post("")
-async def EvaluationAPI(last_ball_round: Annotated[int, Form()], files: List[UploadFile]):
+async def EvaluationAPI(last_ball_round: Annotated[int, Form()], files: List[UploadFile], matchId1:  Annotated[int, Form()] = 23, matchId2:  Annotated[int, Form()] = 28):
   result = []
   for file in files:
       match = pd.read_csv(file.file)
+      info = basicInfo(match, file)
       match['match_id'] = match['match_id'].astype(int).astype(str)
       match_id_mapping = {'1':'23', '3': '28', '5': '30', '6': '31', '7': '32', '13': '49', '2': '25', '4': '29', '8': '36', '9': '43', '10': '44',
                   '11': '45', '19': '55', '14': '50', '15': '51', '30': '72', '36': '79', '44': '97', '17': '53', '26': '64', '12': '48',
@@ -19,7 +21,7 @@ async def EvaluationAPI(last_ball_round: Annotated[int, Form()], files: List[Upl
                   '43': '94', '42': '89', '40': '87'}
       match_id_mapping = {k: int(v) for k, v in match_id_mapping.items()}
       match['match_id'] = match['match_id'].map(match_id_mapping)
-      file_dict = Evaluation(match, last_ball_round, "./api/statics")
-      result.append(file_dict)
+      file_dict = Evaluation(match, last_ball_round, "./api/statics", matchId1, matchId2)
+      result.append({**file_dict, **info})
 
   return result

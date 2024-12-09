@@ -1,14 +1,14 @@
 import pandas as pd
 import numpy as np
-from Utils.TacticDataprocessing import ReadDataFrame, segment_dataframe, translate_coord
-from Utils.Tactic import *
-from Utils.Plot import *
+from .Utils.TacticDataprocessing import ReadDataFrame, segment_dataframe, translate_coord
+from .Utils.Tactic import *
+from .Utils.Plot import *
 
 
 def Layer_tacitc(rally, rally_two, rally_one, player_name, Df_tactic):
     if rally_one == []:
         # return 'No_tactic', Df_tactic
-        return 'No_tactic', Df_tactic, 'No_tactic', 'No_tactic', 'No_tactic' 
+        return 'No', Df_tactic, 'No', 'No', 'No' 
     
     # layer 1
     tactic = analyze_rally_tactics(rally_two, rally_one, player_name)[0]
@@ -17,8 +17,11 @@ def Layer_tacitc(rally, rally_two, rally_one, player_name, Df_tactic):
     tactic_l4 = analyze_rally_tactics_l4(rally_two, rally_one, player_name)[0]
 
     # # 將含有戰術的 rally 存成 csv
-    if tactic != 'No_tactic':
-        rally['tactic'] = tactic
+    if tactic != 'No':
+        if tactic == 'FC':
+            rally['tactic'] = f'{tactic}/{tactic_l2}/{tactic_l3}/{tactic_l4}'
+        else:
+            rally['tactic'] = tactic
         Df_tactic = pd.concat([Df_tactic, rally], ignore_index=True)
         return tactic, Df_tactic, tactic_l2, tactic_l3, tactic_l4
         # return tactic, Df_tactic
@@ -65,10 +68,10 @@ def Tactic(match, dest_folder = './Tactic_Evaluation/Result'):
     for player_name in player_list:
         # 統計 df 和dict
         Df_tactic = pd.DataFrame()    
-        tactic_record = {'Full_Court_Pressure': 0, 'Defensive_Counterattack': 0, 'Four_Corner': 0, 'Forehand_Lock': 0, 
-                         'Backhand_Lock': 0, 'FrontCourt_Lock': 0, 'BackCourt_Lock': 0, 'Four_Corners_Clear_Drop': 0, 'No_tactic': 0}
-        tactic_win_record = {'Full_Court_Pressure': 0, 'Defensive_Counterattack': 0, 'Four_Corner': 0, 'Forehand_Lock': 0, 
-                         'Backhand_Lock': 0, 'FrontCourt_Lock': 0, 'BackCourt_Lock': 0, 'Four_Corners_Clear_Drop': 0, 'No_tactic': 0}
+        tactic_record = {'FCP': 0, 'DC': 0, 'FC': 0, 'FhL': 0, 
+                         'BhL': 0, 'FcL': 0, 'BcL': 0, 'FCCD': 0, 'No': 0}
+        tactic_win_record = {'FCP': 0, 'DC': 0, 'FC': 0, 'FhL': 0, 
+                         'BhL': 0, 'FcL': 0, 'BcL': 0, 'FCCD': 0, 'No': 0}
 
         for rally_df in df_list:
             rally = translate_coord(rally_df, player_list)
@@ -83,19 +86,19 @@ def Tactic(match, dest_folder = './Tactic_Evaluation/Result'):
             
                 # 將戰術判別結果統計起來
                 tactic_record[tactic] += 1
-                if(tactic_l2) != 'No_tactic':
+                if(tactic_l2) != 'No':
                     tactic_record[tactic_l2] += 1
-                if(tactic_l3) != 'No_tactic':
+                if(tactic_l3) != 'No':
                     tactic_record[tactic_l3] += 1
-                if(tactic_l4) != 'No_tactic':
+                if(tactic_l4) != 'No':
                     tactic_record[tactic_l4] += 1
                 if winner == player_name:
                     tactic_win_record[tactic] +=1
-                    if(tactic_l2) != 'No_tactic':
+                    if(tactic_l2) != 'No':
                         tactic_win_record[tactic_l2] += 1
-                    if(tactic_l3) != 'No_tactic':
+                    if(tactic_l3) != 'No':
                         tactic_win_record[tactic_l3] += 1
-                    if(tactic_l4) != 'No_tactic':
+                    if(tactic_l4) != 'No':
                         tactic_win_record[tactic_l4] += 1
 
 

@@ -4,7 +4,7 @@ from typing import List, Tuple, Union
 
 import numpy as np
 import pandas as pd
-import shot_influence.util as util
+from . import util as util
 
 
 def split_data(

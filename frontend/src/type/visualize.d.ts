@@ -28,4 +28,7 @@ interface Visualize {
 interface VisualizeResponse {
   visualize: DisplayRallyResponse;
   [key: string]: Visualize;
+  filename: string;
+  players: string[];
+  rally: number;
 }

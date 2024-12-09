@@ -13,6 +13,7 @@ def ReadFile(file):
 
 def ReadDataFrame(match):
     df = DataPrepocessing(match)
+    print(df)
     df_dict = count_rally_lengths(df['rally'].explode().tolist())
     df_List = segment_dataframe(df)
     df_len = sum(df_dict.values())
@@ -35,25 +36,27 @@ def DataPrepocessing(df):
     df['pace'] = np.nan
     df['exertion'] = np.nan
     for index, _ in df.iterrows():
-        if  pd.isna(df.loc[index, "lose_reason"]) and df.loc[index, "server"] != 3:
-            fly_x = df.loc[index,'hit_x']+df.loc[index,'landing_x']
-            fly_y = 2-(df.loc[index,'hit_y']+df.loc[index,'landing_y']) #modified mid: +1 -> 1-hit_y + 1-landing_y
-            fly_distance = (fly_x**2 + fly_y**2) ** 0.5
-            df.loc[index,'fly_distance'] = fly_distance
-            fly_time = df.loc[index+1, "frame_num"] - df.loc[index, "frame_num"]
-            if fly_time > 0:
-                df.loc[index,"pace"] = fly_distance/fly_time
+        if index+1 < df.shape[0]:
 
-        if  df.loc[index, "server"] == 2:
-            move_x = df.loc[index,'player_move_x']
-            move_y = df.loc[index,'player_move_y']
-            move_distance = (move_x**2 + move_y**2) ** 0.5
-            move_time = df.loc[index+1, "frame_num"] - df.loc[index, "frame_num"]
-            if move_time > 0:
-                if move_distance > 0:
-                    exertion = df.loc[index-1,"pace"]/(move_distance/move_time)
-                    df.loc[index,"exertion"] = exertion
-        
+            if  pd.isna(df.loc[index, "lose_reason"]) and df.loc[index, "server"] != 3:
+                fly_x = df.loc[index,'hit_x']+df.loc[index,'landing_x']
+                fly_y = 2-(df.loc[index,'hit_y']+df.loc[index,'landing_y']) #modified mid: +1 -> 1-hit_y + 1-landing_y
+                fly_distance = (fly_x**2 + fly_y**2) ** 0.5
+                df.loc[index,'fly_distance'] = fly_distance
+                fly_time = df.loc[index+1, "frame_num"] - df.loc[index, "frame_num"]
+                if fly_time > 0:
+                    df.loc[index,"pace"] = fly_distance/fly_time
+
+            if  df.loc[index, "server"] == 2:
+                move_x = df.loc[index,'player_move_x']
+                move_y = df.loc[index,'player_move_y']
+                move_distance = (move_x**2 + move_y**2) ** 0.5
+                move_time = df.loc[index+1, "frame_num"] - df.loc[index, "frame_num"]
+                if move_time > 0:
+                    if move_distance > 0:
+                        exertion = df.loc[index-1,"pace"]/(move_distance/move_time)
+                        df.loc[index,"exertion"] = exertion
+            
     # Normalize pace and exertion
     scaler = MinMaxScaler()
     df[['pace', 'exertion']] = scaler.fit_transform(df[['pace', 'exertion']])
@@ -69,10 +72,11 @@ def DataPrepocessing(df):
             'player_location_x', 'player_location_y',
             'opponent_location_x', 'opponent_location_y', 
             'landing_x', 'landing_y', 'lose_reason', 'getpoint_player',
-            'moving_x', 'moving_y', 'pace', 'exertion_per_rally']].copy()
+            'moving_x', 'moving_y', 'pace', 'exertion_per_rally','frame_num']].copy()
     
     
-    df_way = df_way[df_way['type'] != 'Missed shot'].reset_index(drop=True)
+    # df_way = df_way[df_way['type'] != 'Missed shot'].reset_index(drop=True)
+    df_way = df_way[df_way['frame_num'].notnull()].reset_index(drop=True)
 
     #print(df_way)
     return df_way

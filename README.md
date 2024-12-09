@@ -54,15 +54,14 @@ The environment consists of two parts: the **BadmintonEnv**, which is used for i
 ### BadmintonEnv
 
 - `Utils` includes:
-    - `Constraint.py`: Action constraints are calculated using conditional probabilities based on the ShuttleSet dataset. The pre-processed dataset is located in `input_data`. For pre-processing details, refer to [RallyNetv2](/RallyNetv2/README.md).
-        - We design three action constraints based on the correlation between states and actions:
-        - ![Action Constraints](/assets/Action%20Constraints.png)
-            - **Shot constraint**: Calculates the range of shot types available based on the opponent's shot type and shuttle position (e.g., if the opponent uses a smash, it's unlikely the player will respond with a smash).
-                - Cramer's V between (State 0 + State 3) and Action 0: 0.61
-            - **Landing constraint**: Calculates the range of landing points based on the player's shot type and position (e.g., a player cannot land a net shot after performing a smash).
-                - Cramer's V between (Action 0 + State 1) and Action 2: 0.31
-            - **Movement constraint**: Calculates the range of possible receiving positions based on the player's position (i.e., the player's movement distance has limits).
-                - Cramer's V between State 1 and Action 1: 0.24
+    - `Constraint.py`: Action constraints are calculated based on the ShuttleSet dataset. The pre-processed dataset is located in `input_data`. For pre-processing details, refer to [RallyNetv2](/RallyNetv2/README.md).
+        - We design three action constraints based on the correlation between player actions and other factors:
+        - ![Type Constraints](/assets/Type%20Correlation.png)
+        - ![Landing Constraints](/assets/Landing%20Location%20Correlation.png)
+            - **Shot type constraint**: Calculates the range of shot types available based on the hit location, opponent's shot type, and agent movement along the y-axis (e.g., if the opponent uses a smash, it's unlikely the player will respond with a smash).
+            - **Landing position constraint**: Calculates the range of landing points based on the player's shot type (e.g., net shots cannot land in the backcourt).
+            - **Moving location constraint**: Calculates the range of possible total movement distance.
+            ![Movement Constraints](/assets/Movement%20Distance.png)
     - `RewardFunction.py`: Reward function for reinforcement learning training (users can define their own reward function).
     - `BaseServe.py`: If the agent lacks a custom serve positioning function, this function samples a suitable position based on the current score from the `input_data` and provides it to the agent as the initial state.
 - `Agent`
@@ -72,11 +71,18 @@ The environment consists of two parts: the **BadmintonEnv**, which is used for i
 - `RunEnv.py`: Main program for interacting with the environment.
 - `Environment.py`: Functions for the badminton environment.
 
-### Shot_Evaluation, State_Visualize, Tactic_Evaluation
+### Shot_Evaluation, State_Visualize
 
 Each folder contains:
 - `Utils`: Includes functions for visualization and data pre-processing.
 - `main.py`: The main program for execution.
+
+### Tactic_Evaluation
+- `Utils` includes:
+    - `Plot.py`: Functions for tactic analysis visualization 
+    - `Tactic.py`: Functions for tactic analysis and classification
+    - `TacticDataprcessing.py`: Functions for data pre-processing
+- `main.py`: The main program for execution
 
 ## 2. Build Environment
 

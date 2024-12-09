@@ -8,4 +8,7 @@ interface Tactic {
 
 interface TacticResponse {
   [key: string]: Tactic;
+  filename: string;
+  players: string[];
+  rally: number;
 }

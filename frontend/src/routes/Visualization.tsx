@@ -1,20 +1,21 @@
-import { useState } from "react";
 import { fetchApi } from "../utils/api";
 import VisualizeDisplay from "../components/VisualizeDisplay";
 import Court from "../components/Court";
+import useVisualizeStore from "../store/useVisualizeStore";
 
 const Visualize = () => {
-  const [files, setFiles] = useState<FileList | null>(null);
-  const [opponentType, setOpponentType] = useState(true);
-  const [playerLocationArea, setPlayerLocationArea] = useState(true);
-  const [opponentLocationArea, setOpponentLocationArea] = useState(true);
-  const [hitArea, setHitArea] = useState(true);
-  const [loading, setLoading] = useState(false);
-  const [data, setData] = useState<VisualizeResponse[]>([]);
-  const [index, setIndex] = useState(0);
+  const { files, setFiles } = useVisualizeStore();
+  const { opponentType, setOpponentType } = useVisualizeStore();
+  const { playerLocationArea, setPlayerLocationArea } = useVisualizeStore();
+  const { opponentLocationArea, setOpponentLocationArea } = useVisualizeStore();
+  const { hitArea, setHitArea } = useVisualizeStore();
+  const { loading, setLoading } = useVisualizeStore();
+  const { data, setData } = useVisualizeStore();
+  const { index, setIndex } = useVisualizeStore();
 
-  const [displayIndex, setDisplayIndex] = useState(0);
-  const [timer, setTimer] = useState<null | number>(null);
+  const { displayIndex, addDisplayIndex, minusDisplayIndex } =
+    useVisualizeStore();
+  const { timer, setTimer } = useVisualizeStore();
 
   const handleReset = () => {
     setIndex(0);
@@ -58,11 +59,11 @@ const Visualize = () => {
 
   const nextBall = () => {
     if (displayIndex + 1 < data[index].visualize.records.length)
-      setDisplayIndex((v) => v + 1);
+      addDisplayIndex();
   };
 
   const prevBall = () => {
-    if (displayIndex > 0) setDisplayIndex((v) => v - 1);
+    if (displayIndex > 0) minusDisplayIndex();
   };
 
   const startTimer = () => {
@@ -110,21 +111,26 @@ const Visualize = () => {
                   <button
                     className="btn btn-primary"
                     disabled={index < 1}
-                    onClick={() => setIndex((i) => i - 1)}
+                    onClick={() => setIndex(index - 1)}
                   >
                     Prev
                   </button>
-                  <h1 className="text-2xl font-bold">Set {index + 1}</h1>
+                  <div
+                    className="tooltip tooltip-primary"
+                    data-tip={`${data[index].filename}/${data[index].rally}`}
+                  >
+                    <h1 className="text-2xl font-bold">Set {index + 1}</h1>
+                  </div>
                   <button
                     className="btn btn-primary"
                     disabled={index > data.length - 2}
-                    onClick={() => setIndex((i) => i + 1)}
+                    onClick={() => setIndex(index + 1)}
                   >
                     Next
                   </button>
                 </div>
                 <div className="px-6">
-                  {<VisualizeDisplay data={data[index]} />}
+                  {<VisualizeDisplay data={data[index]} key={index} />}
                 </div>
 
                 {data.length ? (

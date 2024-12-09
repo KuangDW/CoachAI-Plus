@@ -1,5 +1,5 @@
 import pandas as pd
-from Utils.coord2area import coord2area
+from .coord2area import coord2area
 
 def translate_coord(rally_df, Real):
     #rally_df = rally_df.reset_index()

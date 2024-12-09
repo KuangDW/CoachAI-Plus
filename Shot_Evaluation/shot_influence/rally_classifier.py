@@ -5,12 +5,12 @@ from typing import Any, Dict, Tuple
 import keras_self_attention
 
 # import cnn
-import shot_influence.custom_layers as custom_layers
+from . import custom_layers as custom_layers
 import tensorflow as tf
 from keras_pos_embd import TrigPosEmbedding
-from shot_influence.keras_ordered_neurons import ONLSTM
-from shot_influence.keras_transformer import get_encoders
-from shot_influence.keras_transformer.gelu import gelu
+from .keras_ordered_neurons import ONLSTM
+from .keras_transformer import get_encoders
+from .keras_transformer.gelu import gelu
 
 # from shot_influence.prosenet.model import ProSeNet
 

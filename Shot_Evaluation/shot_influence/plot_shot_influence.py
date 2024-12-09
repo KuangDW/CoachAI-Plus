@@ -7,8 +7,8 @@ import uuid
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-import shot_influence.rally_classifier as rc
-import shot_influence.train as train
+from . import rally_classifier as rc
+from . import train as train
 import tensorflow as tf
 from sklearn.preprocessing import MinMaxScaler
 

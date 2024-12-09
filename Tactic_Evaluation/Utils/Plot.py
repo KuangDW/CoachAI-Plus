@@ -15,7 +15,7 @@ def Plot_pie_chart(tactic_dict, player_name, dest_folder = './Tactic_Evaluation/
     """
     # 過濾掉數量為 0 的類別 以及 層次二三四
     tactic_dict = {k: v for k, v in tactic_dict.items() 
-               if v > 0 and k not in ['Forehand_Lock', 'Backhand_Lock', 'FrontCourt_Lock', 'BackCourt_Lock', 'Four_Corners_Clear_Drop']}
+               if v > 0 and k not in ['FhL', 'BhL', 'FcL', 'BcL', 'FCCD']}
     # print(tactic_dict)
     # tactic_dict = {k: v for k, v in tactic_dict.items() if v > 0}
     labels = tactic_dict.keys()
@@ -35,6 +35,16 @@ def Plot_pie_chart(tactic_dict, player_name, dest_folder = './Tactic_Evaluation/
     plt.savefig(filename)
     plt.clf()
     plt.close()
+
+    Text = player_name + "'s tactics distribution : \n" 
+    for k, v in tactic_dict.items():
+        Text = Text + k + ':' + str(v) +'\n'
+
+    # id2 = uuid.uuid4()
+    filename = f'{dest_folder}/{id}'
+    f = open(filename+'.txt', 'w')
+    f.write(Text)
+    f.close()
 
     return id
 
@@ -116,16 +126,16 @@ def coord_diagram(tactic_record, win_record, player1, player2, dest_folder):
                             for winB, playerD in win_record:
                                 if playerD == player2:
                                     # Calculate the total number of rallies for player A
-                                    rally_num_A = (tacticA.get('Full_Court_Pressure', 0) + 
-                                                tacticA.get('Four_Corner', 0) + 
-                                                tacticA.get('Defensive_Counterattack', 0) +
-                                                tacticA.get('No_tactic', 0))
+                                    rally_num_A = (tacticA.get('FCP', 0) + 
+                                                tacticA.get('FC', 0) + 
+                                                tacticA.get('DC', 0) +
+                                                tacticA.get('No', 0))
                                     
                                     # Calculate the total number of rallies for player B
-                                    rally_num_B = (tacticB.get('Full_Court_Pressure', 0) + 
-                                                tacticB.get('Four_Corner', 0) + 
-                                                tacticB.get('Defensive_Counterattack', 0) + 
-                                                tacticB.get('No_tactic', 0))
+                                    rally_num_B = (tacticB.get('FCP', 0) + 
+                                                tacticB.get('FC', 0) + 
+                                                tacticB.get('DC', 0) + 
+                                                tacticB.get('No', 0))
                                     
                                     # Calculate usage for player A
                                     if rally_num_A > 0:
@@ -143,7 +153,7 @@ def coord_diagram(tactic_record, win_record, player1, player2, dest_folder):
                                     win_rate_A = {}
                                     win_rate_B = {}
 
-                                    for tactic in ['Full_Court_Pressure', 'Defensive_Counterattack', 'Four_Corner', 'Forehand_Lock', 'Backhand_Lock', 'FrontCourt_Lock', 'BackCourt_Lock', 'Four_Corners_Clear_Drop', 'No_tactic']:
+                                    for tactic in ['FCP', 'DC', 'FC', 'FhL', 'BhL', 'FcL', 'BcL', 'FCCD', 'No']:
                                         # Win rate for player A
                                         wins_A = winA.get(tactic, 0)
                                         used_A = tacticA.get(tactic, 0)

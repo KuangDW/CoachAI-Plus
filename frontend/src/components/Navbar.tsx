@@ -32,6 +32,15 @@ export const Navbar = () => {
           </NavLink>
         ))}
       </div>
+      <a
+        className="btn btn-secondary"
+        href={`${
+          import.meta.env.DEV ? import.meta.env.VITE_API_BASE : ""
+        }/statics/all_dataset.csv`}
+        download="all_dataset.csv"
+      >
+        Download demo file
+      </a>
     </div>
   );
 };

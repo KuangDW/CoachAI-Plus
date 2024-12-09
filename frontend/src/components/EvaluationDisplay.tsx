@@ -14,14 +14,14 @@ const ShotInfluence = ({ ids }: { ids: string[] }) => {
       <img src={getImgUrl(ids[index])} />
       <div className="flex justify-between items-center">
         <button
-          className="btn btn-primary"
+          className="btn btn-primary btn-sm"
           disabled={index <= 0}
           onClick={() => setIndex((i) => i - 1)}
         >
           Prev
         </button>
         <button
-          className="btn btn-primary"
+          className="btn btn-primary btn-sm"
           disabled={index >= ids.length - 1}
           onClick={() => setIndex((i) => i + 1)}
         >
@@ -45,38 +45,65 @@ export const EvaluationDisplay = ({ data }: { data: EvaluationResponse }) => {
         <img src={getImgUrl(data.energetic_cost)} className="max-h-96" />
       </div>
       <div className="grid grid-cols-2 gap-6">
-        {Object.keys(data)
-          .filter((k) => k != "energetic_cost")
-          .map((key) => (
-            <div className="card bg-base-100 shadow-xl">
-              <div className="card-body">
-                <h1 className="font-bold text-3xl">{key}</h1>
-                <h2 className="card-title">Shot Type</h2>
-                <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-2">
-                  {data[key].shot_type.map((s) => (
-                    <img key={s} src={getImgUrl(s)} />
-                  ))}
-                </div>
-                <h2 className="card-title">Last Ball</h2>
-                <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-2">
-                  <img src={getImgUrl(data[key].last_ball["Smash"])} />
-                  <img src={getImgUrl(data[key].last_ball["Push Shot"])} />
-                  <img src={getImgUrl(data[key].last_ball["Lob"])} />
-                  <img src={getImgUrl(data[key].last_ball["Smash Defence"])} />
-                  <img src={getImgUrl(data[key].last_ball["Net Shot"])} />
-                  <img src={getImgUrl(data[key].last_ball["Drop"])} />
-                  <img src={getImgUrl(data[key].last_ball["Clear"])} />
-                  <img src={getImgUrl(data[key].last_ball["Drive"])} />
-                </div>
-                <h2 className="card-title">Top Reasons</h2>
-                <img src={getImgUrl(data[key].top_reasons.win)} />
-                <img src={getImgUrl(data[key].top_reasons.loose)} />
-                <h2 className="card-title">Shot Influence</h2>
-                <ShotInfluence ids={data[key].shot_influence} />
+        {data.players.map((key) => (
+          <div className="card bg-base-100 shadow-xl">
+            <div className="card-body">
+              <h1 className="font-bold text-3xl">{key}</h1>
+              <h2 className="card-title">Shot Type</h2>
+              <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-2">
+                {data[key].shot_type.map((s) => (
+                  <img key={s} src={getImgUrl(s)} />
+                ))}
               </div>
+              <h2 className="card-title">Last Ball</h2>
+              <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-2">
+                <img src={getImgUrl(data[key].last_ball["Smash"])} />
+                <img src={getImgUrl(data[key].last_ball["Push Shot"])} />
+                <img src={getImgUrl(data[key].last_ball["Lob"])} />
+                <img src={getImgUrl(data[key].last_ball["Smash Defence"])} />
+                <img src={getImgUrl(data[key].last_ball["Net Shot"])} />
+                <img src={getImgUrl(data[key].last_ball["Drop"])} />
+                <img src={getImgUrl(data[key].last_ball["Clear"])} />
+                <img src={getImgUrl(data[key].last_ball["Drive"])} />
+              </div>
+              <h2 className="card-title">Top Reasons</h2>
+              <img src={getImgUrl(data[key].top_reasons.win)} />
+              <img src={getImgUrl(data[key].top_reasons.loose)} />
+              <h2 className="card-title">Shot Influence</h2>
+              <ShotInfluence ids={data[key].shot_influence} />
             </div>
-          ))}
+          </div>
+        ))}
       </div>
+      {data.density_difference ? (
+        <>
+          <h2 className="font-bold text-3xl pt-8">Density Difference</h2>
+          <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-2 pt-4">
+            <img src={getImgUrl(data.density_difference.Clear_lose)} />
+            <img src={getImgUrl(data.density_difference.Clear_win)} />
+            <img src={getImgUrl(data.density_difference.Drive_lose)} />
+            <img src={getImgUrl(data.density_difference.Drive_win)} />
+            <img src={getImgUrl(data.density_difference.Drop_lose)} />
+            <img src={getImgUrl(data.density_difference.Drop_win)} />
+            <img src={getImgUrl(data.density_difference.Lob_lose)} />
+            <img src={getImgUrl(data.density_difference.Lob_win)} />
+            <img src={getImgUrl(data.density_difference["Net Shot_lose"])} />
+            <img src={getImgUrl(data.density_difference["Net Shot_win"])} />
+            <img src={getImgUrl(data.density_difference["Push Shot_lose"])} />
+            <img src={getImgUrl(data.density_difference["Push Shot_win"])} />
+            <img
+              src={getImgUrl(data.density_difference["Smash Defence_lose"])}
+            />
+            <img
+              src={getImgUrl(data.density_difference["Smash Defence_win"])}
+            />
+            <img src={getImgUrl(data.density_difference.Smash_lose)} />
+            <img src={getImgUrl(data.density_difference.Smash_win)} />
+          </div>
+        </>
+      ) : (
+        ""
+      )}
     </>
   );
 };

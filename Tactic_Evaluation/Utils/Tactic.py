@@ -339,27 +339,27 @@ def analyze_rally_tactics(rally_two, rally, player):
     ball_num = {}
     
     if Full_Court_Pressure(rally) is not None:
-        ball_num['Full_Court_Pressure'] = Full_Court_Pressure(rally)
+        ball_num['FCP'] = Full_Court_Pressure(rally)
         t_num += 1
     if Defensive_Counterattack(rally_two, player) is not None:
-        ball_num['Defensive_Counterattack'] = Defensive_Counterattack(rally_two, player)
+        ball_num['DC'] = Defensive_Counterattack(rally_two, player)
         t_num += 1
     if Four_Corner(rally) is not None:
-        ball_num['Four_Corner'] = Four_Corner(rally)
+        ball_num['FC'] = Four_Corner(rally)
         t_num += 1
 
     # 若沒有檢驗到戰術則返回 no tactic
     if t_num == 0:
-        return ['No_tactic']
+        return ['No']
     
     # 檢查最後兩個動作
     last_two_actions = rally[-2:]
 
     # step1: 若倒數兩顆有守中反攻
-    if 'Defensive_Counterattack' in ball_num and any(
-            last_two_actions[i][1] in range(ball_num['Defensive_Counterattack'][0], ball_num['Defensive_Counterattack'][1] + 1)
+    if 'DC' in ball_num and any(
+            last_two_actions[i][1] in range(ball_num['DC'][0], ball_num['DC'][1] + 1)
             for i in range(2)):
-        return ['Defensive_Counterattack']
+        return ['DC']
     
     # step2: 如果區間只有一個元素，直接選擇該戰術
     for key, interval in ball_num.items():
@@ -367,34 +367,34 @@ def analyze_rally_tactics(rally_two, rally, player):
             return [key]
      
     # step3: 檢查全面下壓跟四角拉吊
-    if 'Full_Court_Pressure' in ball_num:
-        Full_Court_Pressure_len, full_court_pressure_b = sum_and_max(ball_num['Full_Court_Pressure'])
+    if 'FCP' in ball_num:
+        Full_Court_Pressure_len, full_court_pressure_b = sum_and_max(ball_num['FCP'])
     else: 
         Full_Court_Pressure_len, full_court_pressure_b = [0, 0]
-    if 'Four_Corner' in ball_num:
-        Four_Corner_len, Four_Corner_b = sum_and_max(ball_num['Four_Corner'])
+    if 'FC' in ball_num:
+        Four_Corner_len, Four_Corner_b = sum_and_max(ball_num['FC'])
     else:
         Four_Corner_len, Four_Corner_b = [0, 0]
 
     if full_court_pressure_b > Four_Corner_b:
-        return ['Full_Court_Pressure']
+        return ['FCP']
     if full_court_pressure_b < Four_Corner_b:
-        return ['Four_Corner']
+        return ['FC']
 
     # step3: 若倒數兩顆有無殺球
     last_two_smash = any(action[3] == 'Smash' for action in last_two_actions)
     # print('last_two_actions:\n',last_two_actions)
 
-    if last_two_smash and 'Full_Court_Pressure' in ball_num:
+    if last_two_smash and 'FCP' in ball_num:
         # Check if any of the last two actions fall within the range specified in 'Full_Court_Pressure'
-        a = ball_num['Full_Court_Pressure'][-1][0]
+        a = ball_num['FCP'][-1][0]
         a = 2 * a - 1
-        b = ball_num['Full_Court_Pressure'][-1][1]
+        b = ball_num['FCP'][-1][1]
         b = 2 * b + 1
         if any(last_two_actions[i][1] in range(a, b) for i in range(2)):
-            return ['Full_Court_Pressure']
+            return ['FCP']
     else:
-        return ['Four_Corner']
+        return ['FC']
 
     
 
@@ -407,27 +407,27 @@ def analyze_rally_tactics_l2(rally_two, rally, player):
     Forehand_Lock_len, Forehand_Lock_b, Backhand_Lock_len, Backhand_Lock_b = [0, 0, 0, 0]
     
     if Forehand_Lock(rally) is not None:
-        ball_num['Forehand_Lock'] = Forehand_Lock(rally)
-        Forehand_Lock_len, Forehand_Lock_b = sum_and_max(ball_num['Forehand_Lock'])
+        ball_num['FhL'] = Forehand_Lock(rally)
+        Forehand_Lock_len, Forehand_Lock_b = sum_and_max(ball_num['FhL'])
         t_num += 1
     if Backhand_Lock(rally) is not None:
-        ball_num['Backhand_Lock'] = Backhand_Lock(rally)
-        Backhand_Lock_len, Backhand_Lock_b = sum_and_max(ball_num['Backhand_Lock'])
+        ball_num['BhL'] = Backhand_Lock(rally)
+        Backhand_Lock_len, Backhand_Lock_b = sum_and_max(ball_num['BhL'])
         t_num += 1
 
     # 若沒有檢驗到戰術則返回 no tactic
     if t_num == 0:
-        return ['No_tactic']
+        return ['No']
 
     if Forehand_Lock_len > Backhand_Lock_len:
-        return ['Forehand_Lock']
+        return ['FhL']
     if Forehand_Lock_len < Backhand_Lock_len:
-        return ['Backhand_Lock']
+        return ['BhL']
     
     if Forehand_Lock_b > Backhand_Lock_b:
-        return ['Forehand_Lock']
+        return ['FhL']
     
-    return ['Backhand_Lock']
+    return ['BhL']
 
 # 層次三
 # 此函式會回傳層次三的戰術
@@ -439,27 +439,27 @@ def analyze_rally_tactics_l3(rally_two, rally, player):
     FrontCourt_Lock_len, FrontCourt_Lock_b, BackCourt_Lock_len, BackCourt_Lock_b = [0, 0, 0, 0]
     
     if FrontCourt_Lock(rally) is not None:
-        ball_num['FrontCourt_Lock'] = FrontCourt_Lock(rally)
-        FrontCourt_Lock_len, FrontCourt_Lock_b = sum_and_max(ball_num['FrontCourt_Lock'])
+        ball_num['FcL'] = FrontCourt_Lock(rally)
+        FrontCourt_Lock_len, FrontCourt_Lock_b = sum_and_max(ball_num['FcL'])
         t_num += 1
     if BackCourt_Lock(rally) is not None:
-        ball_num['BackCourt_Lock'] = BackCourt_Lock(rally)
-        BackCourt_Lock_len, BackCourt_Lock_b = sum_and_max(ball_num['BackCourt_Lock'])
+        ball_num['BcL'] = BackCourt_Lock(rally)
+        BackCourt_Lock_len, BackCourt_Lock_b = sum_and_max(ball_num['BcL'])
         t_num += 1
 
     # 若沒有檢驗到戰術則返回 no tactic
     if t_num == 0:
-        return ['No_tactic']
+        return ['No']
     
     if FrontCourt_Lock_len > BackCourt_Lock_len:
-        return ['FrontCourt_Lock']
+        return ['FcL']
     if FrontCourt_Lock_len < BackCourt_Lock_len:
-        return ['BackCourt_Lock']
+        return ['BcL']
     
     if FrontCourt_Lock_b > BackCourt_Lock_b:
-        return ['FrontCourt_Lock']
+        return ['FcL']
     
-    return ['BackCourt_Lock']
+    return ['BcL']
 
 # 層次四
 # 此函式會回傳層次四的戰術
@@ -474,16 +474,16 @@ def analyze_rally_tactics_l4(rally_two, rally, player):
 
     
     if Four_Corners_Clear_Drop(rally) is not None:
-        ball_num['Four_Corners_Clear_Drop'] = Four_Corners_Clear_Drop(rally)
+        ball_num['FCCD'] = Four_Corners_Clear_Drop(rally)
         t_num += 1
 
     # 若沒有檢驗到戰術則返回 no tactic
     if t_num == 0:
-        return ['No_tactic']
+        return ['No']
     
-    Four_Corners_Clear_Drop_len, Four_Corners_Clear_Drop_b = sum_and_max(ball_num['Four_Corners_Clear_Drop'])
+    Four_Corners_Clear_Drop_len, Four_Corners_Clear_Drop_b = sum_and_max(ball_num['FCCD'])
 
-    if (n - Four_Corners_Clear_Drop_b) < 3 and ( ((analyze_rally_tactics_l2 == ['No_tactic']) and (analyze_rally_tactics_l3 == ['No_tactic'])) or ((analyze_rally_tactics_l2 != ['No_tactic']) and (analyze_rally_tactics_l3 != ['No_tactic']))):
-        return ['Four_Corners_Clear_Drop']
+    if (n - Four_Corners_Clear_Drop_b) < 3 and ( ((analyze_rally_tactics_l2 == ['No']) and (analyze_rally_tactics_l3 == ['No'])) or ((analyze_rally_tactics_l2 != ['No']) and (analyze_rally_tactics_l3 != ['No']))):
+        return ['FCCD']
     
-    return ['No_tactic']
+    return ['No']
