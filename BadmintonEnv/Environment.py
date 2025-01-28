@@ -73,11 +73,13 @@ class BadmintonEnv:
         dx = (action[1][0] - state[1][0]) / 177.5
         dy = (action[1][1] - state[1][1]) / 240
         total_distance = (dx**2 + dy**2) ** 0.5
-        if total_distance >= 1.6:
-            return "Miss hit"
+        
 
         if not (-127.5 <= action[2][0] <= 127.5) or not (0 <= action[2][1] <= 330):
             return "Out of bound"
+        
+        if total_distance >= 1.6:
+            return "Miss hit"
 
         if is_launch:
             # if opponent is on the x > 0, then it's 0, otherwise, it's 1

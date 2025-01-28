@@ -387,7 +387,8 @@ class BadmintonConstraint:
                     for action in valid_actions:
                         action_index = self.type_mapping[action]
                         action_distribution_1[state_0][hit_loc_index][y_move_index][
-                            action_index
+                            # action_index
+                            action_index-1
                         ] = 1
 
         # 根據 action[0] 和 state[3] 計算 action[2] 的條件分佈 -> 球種決定 + 擊球點 => 落點決定（落點上限）
@@ -447,7 +448,7 @@ class BadmintonConstraint:
             if (
                 self.action_distribution_1.get(
                     state_0, [[[0] * 10 for _ in range(6)] for _ in range(24)]
-                )[action_1][y_move_index][action_0]
+                )[action_1][y_move_index][action_0-1]
                 == 0
             ):
                 # print(state_0)

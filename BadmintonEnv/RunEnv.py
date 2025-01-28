@@ -1,6 +1,6 @@
-from Environment import BadmintonEnv
-from Agent.BC import BC
-from Agent.RallyNet import RallyNet
+from .Environment import BadmintonEnv
+from .Agent.BC import BC
+from .Agent.RallyNet import RallyNet
 import pickle
 import torch
 

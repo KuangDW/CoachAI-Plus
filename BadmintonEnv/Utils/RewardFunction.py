@@ -5,7 +5,7 @@ def Reward_function(Violation_reason, Mode, IsConstraint):
     if IsConstraint:
         reward -= 1
 
-    if Mode == 'Win':
+    if Mode == 'win':
         reward += 1
 
     elif Mode == 'lose':

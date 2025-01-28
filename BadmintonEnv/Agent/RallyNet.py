@@ -435,8 +435,8 @@ class RallyNet(nn.Module):
             for i in range(len(target_states)):
                 ht[i,:,:] = self.translation4RallyNet(target_states[i], info, i+1, target_player[i])
             ht[step,:,:] = self.translation4RallyNet(states, info, step+1, self.target_players[self.player_id])
-            if step != len(target_states):
-                raise RuntimeError("Current step not equal to len(target_states) + 1")
+            # if step != len(target_states):
+            #     raise RuntimeError("Current step not equal to len(target_states) + 1")
         else:
             states = self.translation4RallyNet(states, info, step+1, self.target_players[self.player_id])
             ht[step,:,:] = states
@@ -449,7 +449,7 @@ class RallyNet(nn.Module):
         self.contextualize((self.ts, ctx))
         qz0_mean, qz0_logstd = self.qz0_net(ctx[step]).chunk(chunks=2, dim=1)
         z0 = qz0_mean + qz0_logstd.exp() * torch.randn_like(qz0_mean)
-        zs = torchsde.sdeint(self, z0, self.ts[step:], names={'drift': 'h'}, dt=2/int(self.ts.shape[0]), bm=None)
+        zs = torchsde.sdeint(self, z0, self.ts[step: step+2], names={'drift': 'h'}, dt=2/int(self.ts.shape[0]), bm=None)
 
         land, shot, move = self.action_model(zs)
         land = gmm_sample(land.view(-1, 5 * 5), 5, max_std=0.15).unsqueeze(1)
